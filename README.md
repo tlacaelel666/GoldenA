@@ -38,7 +38,7 @@ Una interfaz de línea de comandos interactiva para ejecutar circuitos cuántico
 
 1. **Clona o descarga el repositorio**
    ```bash
-   git clone github.com/tlacaelel666/GoldenA
+   git clone https://github.com/tlacaelel666/GoldenA.git
    cd GoldenA
    ```
 
@@ -52,6 +52,8 @@ Una interfaz de línea de comandos interactiva para ejecutar circuitos cuántico
    ```bash
    python main.py
    ```
+
+---
 
 ---
 
@@ -353,3 +355,4 @@ Apache 2.0.
 ---
 
 **Última actualización**: 2025 | **Versión**: 3.2
+
