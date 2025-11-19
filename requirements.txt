@@ -1,0 +1,7 @@
+qiskit>=1.0.0
+qiskit-aer>=0.13.0
+qiskit-ibm-runtime>=0.20.0
+numpy>=1.23.0
+matplotlib>=3.7.0
+pylatexenc  # Opcional, para mejores gráficos de circuitos
+plotly>=5.0.0
