@@ -21,6 +21,8 @@ import numpy as np
 from typing import List, Dict, Tuple, Optional
 import sys
 import os
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 # Asegurar que podemos importar desde el directorio raíz del proyecto
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -297,7 +299,98 @@ class FibonacciMetriplecticQML:
         
         return analysis
 
+        return analysis
 
+    def visualize_holographic_shapes(self, analyses: List[Tuple[str, Dict]]):
+        """
+        Genera visualización holográfica (Trayectorias en esfera de Bloch/Espacio de Fase).
+        """
+        print(f"\n🎨 Generando formas holográficas...")
+        
+        fig = make_subplots(
+            rows=1, cols=2,
+            specs=[[{"type": "scene"}, {"type": "xy"}]],
+            subplot_titles=("Trayectoria en Espacio de Fase (Holográfico)", "Producción de Entropía"),
+            column_widths=[0.6, 0.4]
+        )
+        
+        colors = {'PARES': 'cyan', 'IMPARES': 'magenta', 'MIXTA': 'gold'}
+        
+        for name, analysis in analyses:
+            history = analysis['history']
+            z = history['z']  # Shape (n_points, 2)
+            entropy = history['entropy']
+            t = history['t']
+            
+            # 3D Plot: z0 vs z1 vs entropy (Holographic Phase Space)
+            fig.add_trace(
+                go.Scatter3d(
+                    x=z[:, 0],
+                    y=z[:, 1],
+                    z=entropy,
+                    mode='lines',
+                    name=f'{name} (Fase)',
+                    line=dict(color=colors.get(name, 'white'), width=5),
+                    opacity=0.8
+                ),
+                row=1, col=1
+            )
+            
+            # 2D Plot: Entropy vs Time
+            fig.add_trace(
+                go.Scatter(
+                    x=t,
+                    y=entropy,
+                    mode='lines',
+                    name=f'{name} (Entropía)',
+                    line=dict(color=colors.get(name, 'white'), width=2, dash='dot')
+                ),
+                row=1, col=2
+            )
+
+        # Layout holográfico
+        fig.update_layout(
+            title="Dinámica Metripléctica: Formas Holográficas",
+            template="plotly_dark",
+            height=600,
+            scene=dict(
+                xaxis_title='Amplitud |0...0>',
+                yaxis_title='Amplitud |1...1>',
+                zaxis_title='Entropía (S)',
+                camera=dict(eye=dict(x=1.5, y=1.5, z=1.5))
+            )
+        )
+        
+        # Guardar HTML con viewport
+        output_file = "cgh_holographic.html"
+        plot_html = fig.to_html(full_html=False, include_plotlyjs='cdn')
+        
+        full_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>CGH Holographic Shapes</title>
+            <style>body {{ margin: 0; background: #111; }}</style>
+        </head>
+        <body>
+            {plot_html}
+        </body>
+        </html>
+        """
+        
+        with open(output_file, "w") as f:
+            f.write(full_html)
+            
+        print(f"✅ Visualización holográfica guardada en '{output_file}'")
+        
+        # Intentar abrir
+        import webbrowser
+        try:
+            webbrowser.open(output_file)
+        except:
+            pass
 def demo_fibonacci_metriplectic(n_qubits: int = 3):
     """
     Demostración de Fibonacci QML con estructura metriplética.
@@ -376,6 +469,13 @@ def demo_fibonacci_metriplectic(n_qubits: int = 3):
     print("  • Secuencias IMPARES tienen menor F_eff (menor fricción)")
     print("  • Secuencias MIXTAS permiten control fino de disipación")
     print("  • La estructura metriplética preserva consistencia termodinámica")
+
+    # Generar visualización
+    qml.visualize_holographic_shapes([
+        ("PARES", analysis_even),
+        ("IMPARES", analysis_odd),
+        ("MIXTA", analysis_mixed)
+    ])
 
 
 if __name__ == "__main__":

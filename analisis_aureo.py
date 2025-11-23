@@ -119,9 +119,37 @@ def ejecutar_analisis():
     fig.update_yaxes(title_text="Probabilidad P(|01⟩)", range=[0, 1], row=2, col=1)
 
     # Guardar
+    # Guardar con viewport para móviles
     output_file = "analisis_aureo.html"
     print(f"Guardando visualización en '{output_file}'...")
-    fig.write_html(output_file, auto_open=True)
+    
+    # Generar HTML parcial
+    plot_html = fig.to_html(full_html=False, include_plotlyjs='cdn')
+    
+    # Envolver en HTML completo con viewport
+    full_html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Análisis Áureo</title>
+    </head>
+    <body>
+        {plot_html}
+    </body>
+    </html>
+    """
+    
+    with open(output_file, "w") as f:
+        f.write(full_html)
+        
+    # Abrir automáticamente (opcional, depende del entorno)
+    import webbrowser
+    try:
+        webbrowser.open(output_file)
+    except:
+        pass
     print(f"✅ Gráfico guardado exitosamente.")
 
 if __name__ == "__main__":
