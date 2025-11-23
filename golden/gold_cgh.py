@@ -361,7 +361,7 @@ class FibonacciMetriplecticQML:
             )
         )
         
-        # Guardar HTML con viewport
+        # Guardar HTML con viewport y estilos responsive
         output_file = "cgh_holographic.html"
         plot_html = fig.to_html(full_html=False, include_plotlyjs='cdn')
         
@@ -370,15 +370,91 @@ class FibonacciMetriplecticQML:
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CGH Holographic Shapes</title>
-    <style>body {{ margin: 0; background: #111; }}</style>
+    <meta name="description" content="Análisis Metripléctico de Circuitos Cuánticos con Fibonacci">
+    <meta name="author" content="GoldenA Quantum Framework">
+    <title>CGH Holographic Shapes - Análisis Metripléctico</title>
+    <style>
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
+        body {{
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }}
+        .container {{
+            width: 100%;
+            max-width: 100vw;
+            padding: 1rem;
+        }}
+        .header {{
+            text-align: center;
+            padding: 1.5rem 0;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #00d4ff;
+            margin-bottom: 1rem;
+        }}
+        .header h1 {{
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            background: linear-gradient(45deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }}
+        .header p {{
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            color: #a0a0a0;
+        }}
+        .plot-container {{
+            width: 100%;
+            height: auto;
+            min-height: 60vh;
+        }}
+        @media (max-width: 768px) {{
+            .container {{
+                padding: 0.5rem;
+            }}
+            .header {{
+                padding: 1rem 0;
+            }}
+            .plot-container {{
+                min-height: 50vh;
+            }}
+        }}
+        @media print {{
+            body {{
+                background: white;
+                color: black;
+            }}
+            .header {{
+                background: none;
+                border-bottom: 2px solid black;
+            }}
+        }}
+    </style>
 </head>
 <body>
-    {plot_html}
+    <div class="header">
+        <h1>🌀 Análisis Metripléctico CGH</h1>
+        <p>Dinámica Fibonacci en Circuitos Cuánticos</p>
+    </div>
+    <div class="container">
+        <div class="plot-container">
+            {plot_html}
+        </div>
+    </div>
 </body>
 </html>"""
         
-        with open(output_file, "w") as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             f.write(full_html)
             
         print(f"✅ Visualización holográfica guardada en '{output_file}'")
@@ -389,6 +465,94 @@ class FibonacciMetriplecticQML:
             webbrowser.open(output_file)
         except:
             pass
+
+def analyze_circuit_metriplectic(circuit, n_qubits: int = None):
+    """
+    Analiza un circuito de Qiskit extrayendo parámetros Fibonacci de GoldenGates.
+    
+    Args:
+        circuit: QuantumCircuit de Qiskit
+        n_qubits: Número de qubits (si None, se infiere del circuito)
+    
+    Returns:
+        Dict con resultados del análisis
+    """
+    if circuit is None:
+        print("❌ No hay circuito para analizar")
+        return None
+    
+    # Inferir número de qubits
+    if n_qubits is None:
+        n_qubits = circuit.num_qubits
+    
+    print("=" * 80)
+    print(f"🔬 ANÁLISIS METRIPLÉCTICO DEL CIRCUITO")
+    print("=" * 80)
+    print(f"  Qubits: {n_qubits}")
+    print(f"  Profundidad: {circuit.depth()}")
+    print(f"  Operaciones: {len(circuit.data)}")
+    
+    # Extraer parámetros de GoldenGates
+    fib_params = []
+    for instruction, qargs, cargs in circuit.data:
+        if instruction.name == "golden_gate":
+            # Extraer el parámetro n de la GoldenGate
+            n_val = instruction.params[0]
+            fib_params.append(int(n_val))
+            # Obtener índice del qubit correctamente
+            qubit_index = circuit.find_bit(qargs[0]).index
+            print(f"  ✓ GoldenGate encontrada: n={n_val} en qubit {qubit_index}")
+
+    
+    if not fib_params:
+        print("\n⚠️  No se encontraron GoldenGates en el circuito")
+        print("💡 Tip: Agrega puertas phi con 'agregar phi <n> <qubit>'")
+        return None
+    
+    print(f"\n📊 Parámetros Fibonacci extraídos: {fib_params}")
+    
+    # Crear sistema metripléctico
+    qml = FibonacciMetriplecticQML(
+        n_qubits=n_qubits,
+        decoherence_strength=0.001
+    )
+    
+    # Analizar con los parámetros extraídos
+    print(f"\n{'─' * 80}")
+    print("ANÁLISIS METRIPLÉCTICO")
+    print(f"{'─' * 80}")
+    
+    analysis = qml.analyze_fibonacci_coupling(fib_params, t_final=10.0)
+    
+    # Clasificar régimen
+    dS = analysis['entropy_production']
+    if dS < 1e-6:
+        regime = "Coherente"
+    elif dS < 1e-4:
+        regime = "Cuasi-coherente"
+    else:
+        regime = "Disipativo"
+    
+    print(f"\n{'=' * 80}")
+    print("📊 RESUMEN DEL ANÁLISIS")
+    print(f"{'=' * 80}")
+    print(f"  Parámetros Fibonacci: {fib_params}")
+    print(f"  Valores Fibonacci: {analysis['fib_values']}")
+    print(f"  Pares/Impares: {analysis['n_even']}/{analysis['n_odd']}")
+    print(f"  F_efectiva: {analysis['F_effective']:.6f}")
+    print(f"  Gap energético: {analysis['energy_gap']:.6f}")
+    print(f"  Producción de entropía: {dS:.6e}")
+    print(f"  Régimen: {regime}")
+    print(f"{'=' * 80}")
+    
+    # Generar visualización
+    qml.visualize_holographic_shapes([
+        ("CIRCUITO", analysis)
+    ])
+    
+    return analysis
+
+
 def demo_fibonacci_metriplectic(n_qubits: int = 3):
     """
     Demostración de Fibonacci QML con estructura metriplética.

@@ -192,7 +192,7 @@ def show_help():
         "Información": [
             ("ver", "Mostrar circuito actual"),
             ("analisis", "Visualización 3D de dinámica áurea"),
-            ("cgh", "Análisis Fibonacci Metripléctico (gold_cgh)"),
+            ("cgh", "Análisis Fibonacci Metripléctico del circuito actual"),
             ("puertas", "Ver puertas disponibles"),
             ("demo", "Ejemplos de circuitos"),
             ("ayuda", "Esta ayuda"),
@@ -539,9 +539,15 @@ class QiskitCLI:
 
             # ============ CGH (Fibonacci Metriplectic) ============
             elif command == "cgh":
-                # Usar el número de qubits actual si es válido, sino default a 3
-                n_q = self.num_qubits if self.num_qubits > 0 else 3
-                demo_fibonacci_metriplectic(n_q)
+                if self.circuit is None:
+                    print(f"{Colors.WARNING}⚠️  [Paso {step}] No hay circuito. Ejecutando demo...{Colors.ENDC}")
+                    # Usar el número de qubits actual si es válido, sino default a 3
+                    n_q = self.num_qubits if self.num_qubits > 0 else 3
+                    demo_fibonacci_metriplectic(n_q)
+                else:
+                    # Analizar el circuito actual
+                    analyze_circuit_metriplectic(self.circuit, self.num_qubits)
+
 
             # ============ OTROS COMANDOS ============
             elif command == "puertas":
