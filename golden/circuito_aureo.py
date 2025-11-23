@@ -14,6 +14,7 @@ from qiskit_aer import AerSimulator
 from qiskit.visualization import plot_histogram
 from analisis_aureo import ejecutar_analisis
 from golden.gold_cgh import demo_fibonacci_metriplectic, analyze_circuit_metriplectic
+from golden.bloch_viz import visualize_bloch_spheres, print_bloch_info
 import matplotlib.pyplot as plt
 import logging
 from pathlib import Path
@@ -191,6 +192,7 @@ def show_help():
         ],
         "Información": [
             ("ver", "Mostrar circuito actual"),
+            ("bloch [qubits]", "Visualizar esferas de Bloch (todos o específicos)"),
             ("analisis", "Visualización 3D de dinámica áurea"),
             ("cgh", "Análisis Fibonacci Metripléctico del circuito actual"),
             ("puertas", "Ver puertas disponibles"),
@@ -548,6 +550,59 @@ class QiskitCLI:
                     # Analizar el circuito actual
                     analyze_circuit_metriplectic(self.circuit, self.num_qubits)
 
+            # ============ BLOCH (Visualización de Esferas de Bloch) ============
+            elif command == "bloch":
+                if self.circuit is None:
+                    print(f"{Colors.WARNING}⚠️  [Paso {step}] No hay circuito para visualizar{Colors.ENDC}")
+                    return False
+                
+                try:
+                    # Parsear argumentos: qubits específicos o todos
+                    qubit_indices = None
+                    if args:
+                        # Convertir argumentos a índices de qubits
+                        qubit_indices = []
+                        for arg in args:
+                            try:
+                                q = int(arg)
+                                if q < 0 or q >= self.num_qubits:
+                                    print(f"{Colors.FAIL}❌ [Paso {step}] Qubit {q} fuera de rango (0-{self.num_qubits-1}){Colors.ENDC}")
+                                    return False
+                                qubit_indices.append(q)
+                            except ValueError:
+                                print(f"{Colors.FAIL}❌ [Paso {step}] Argumento inválido: '{arg}'{Colors.ENDC}")
+                                return False
+                    
+                    # Determinar qué qubits visualizar
+                    if qubit_indices is None:
+                        num_to_show = min(self.num_qubits, 10)
+                        qubit_indices = list(range(num_to_show))
+                        if self.num_qubits > 10:
+                            print(f"{Colors.WARNING}⚠️  [Paso {step}] Mostrando solo los primeros 10 qubits de {self.num_qubits}{Colors.ENDC}")
+                    
+                    print(f"\n{Colors.BOLD}{Colors.OKCYAN}🌐 VISUALIZACIÓN DE ESFERAS DE BLOCH{Colors.ENDC}")
+                    print(f"Qubits a visualizar: {qubit_indices}\n")
+                    
+                    # Imprimir información de los vectores de Bloch
+                    print_bloch_info(self.circuit, self.num_qubits, qubit_indices)
+                    
+                    # Generar visualización
+                    fig, save_path = visualize_bloch_spheres(
+                        self.circuit, 
+                        self.num_qubits, 
+                        qubit_indices
+                    )
+                    
+                    print(f"\n{Colors.OKGREEN}✅ Esferas de Bloch guardadas: {save_path}{Colors.ENDC}")
+                    self.logger.info(f"Bloch spheres visualized for qubits: {qubit_indices}")
+                    
+                    # Cerrar la figura para liberar memoria
+                    plt.close(fig)
+                    
+                except Exception as e:
+                    print(f"{Colors.FAIL}❌ [Paso {step}] Error en visualización de Bloch: {e}{Colors.ENDC}")
+                    self.logger.error(f"Error en bloch: {e}", exc_info=True)
+                    return False
 
             # ============ OTROS COMANDOS ============
             elif command == "puertas":
@@ -585,6 +640,9 @@ class QiskitCLI:
             ("Deutsch", "crear 2 | agregar x 1 | agregar h 0 | agregar h 1 | agregar cx 0 1 | agregar h 0 | medir | ejecutar 1000"),
             ("Golden Ratio (Phi n -> phi 3)", "crear 1 | agregar h 0 | agregar phi 3 0 | medir | ejecutar 1000"),
             ("Toffoli", "crear 3 | agregar h 0 | agregar h 1 | agregar ccx 0 1 2 | medir | ejecutar 1000"),
+            ("Bloch - Un qubit", "crear 1 | agregar h 0 | bloch"),
+            ("Bloch - Múltiples qubits", "crear 3 | agregar h 0 | agregar cx 0 1 | agregar x 2 | bloch"),
+            ("Bloch - Qubits específicos", "crear 5 | agregar h 0 | agregar cx 0 1 | agregar x 2 | bloch 0 2"),
         ]
 
         print(f"\n{Colors.BOLD}{Colors.OKCYAN}🎬 DEMOSTRACIONES{Colors.ENDC}\n")
