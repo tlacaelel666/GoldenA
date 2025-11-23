@@ -127,19 +127,17 @@ def ejecutar_analisis():
     plot_html = fig.to_html(full_html=False, include_plotlyjs='cdn')
     
     # Envolver en HTML completo con viewport
-    full_html = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Análisis Áureo</title>
-    </head>
-    <body>
-        {plot_html}
-    </body>
-    </html>
-    """
+    full_html = f"""<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Áureo</title>
+</head>
+<body>
+    {plot_html}
+</body>
+</html>"""
     
     with open(output_file, "w") as f:
         f.write(full_html)
