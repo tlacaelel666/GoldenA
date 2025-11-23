@@ -13,7 +13,7 @@ from qiskit.circuit import Gate
 from qiskit_aer import AerSimulator
 from qiskit.visualization import plot_histogram
 from analisis_aureo import ejecutar_analisis
-from golden.gold_cgh import demo_fibonacci_metriplectic
+from golden.gold_cgh import demo_fibonacci_metriplectic, analyze_circuit_metriplectic
 import matplotlib.pyplot as plt
 import logging
 from pathlib import Path
