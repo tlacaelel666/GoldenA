@@ -6,15 +6,13 @@
 
 ----
 
-# 🚀 Qiskit Runtime CLI v3.2 - One-Liner Pipeline 
-
+# 🚀 Qiskit Runtime CLI v3.2 - One-Liner Pipeline
 
 ![Quantum Badge](https://img.shields.io/badge/quantum-system-blue)
 ![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
 ![License](https://img.shields.io/badge/license-Apache%202.0-green)
 ![Qis-kit CLI](https://img.shields.io/badge/Qiskit-runtime-yellow)
 ![SmokApp Q](https://img.shields.io/badge/GoldenA-v3.2-black)
-
 
 Una interfaz de línea de comandos interactiva para ejecutar circuitos cuánticos con Qiskit, diseñada con un enfoque en la **dinámica áurea** (golden ratio) y análisis experimental de polarización cuántica.
 
@@ -31,24 +29,28 @@ Una interfaz de línea de comandos interactiva para ejecutar circuitos cuántico
 ## 🎯 Instalación
 
 ### Requisitos Previos
+
 - Python 3.8 o superior
 - pip
 
 ### Pasos
 
 1. **Clona o descarga el repositorio**
+
    ```bash
    git clone https://github.com/tlacaelel666/GoldenA.git
    cd GoldenA
    ```
 
 2. **Instala las dependencias**
+
    ```bash
    python3 -m venv env
    pip install -r requirements.txt
    ```
 
 3. **Ejecuta la CLI**
+
    ```bash
    python main.py
    ```
@@ -117,6 +119,7 @@ crear 3 | agregar h 0 | agregar cx 0 1 | medir | ejecutar 1024
 ## 🎨 Puertas Disponibles
 
 ### Puertas de 1 Qubit (sin parámetros)
+
 - `h`: Hadamard (superposición)
 - `x`, `y`, `z`: Puertas de Pauli
 - `s`, `sdg`: Fase ±π/2
@@ -124,11 +127,13 @@ crear 3 | agregar h 0 | agregar cx 0 1 | medir | ejecutar 1024
 - `i`: Identidad
 
 ### Puertas de 1 Qubit (con ángulo)
+
 - `rx <θ>`, `ry <θ>`, `rz <θ>`: Rotaciones
 - `p <λ>`: Cambio de fase
 - **`phi <n>`**: Puerta áurea personalizada sustituye <n> por cualquier numero entero
 
 ### Puertas de 2 Qubits
+
 - `cx`: CNOT (Control-NOT)
 - `cy`, `cz`: Control-Y, Control-Z
 - `swap`: Intercambiar qubits
@@ -136,6 +141,7 @@ crear 3 | agregar h 0 | agregar cx 0 1 | medir | ejecutar 1024
 - `cp <λ>`: Control-Phase
 
 ### Puertas de 3 Qubits
+
 - `ccx`: Toffoli (Control-Control-NOT)
 - `cswap`: Fredkin (SWAP controlado)
 
@@ -150,6 +156,7 @@ Este es el corazón del proyecto. El comando `analisis` genera una visualizació
 El análisis crea dos visualizaciones integradas:
 
 #### 1. **Gráfico 3D: Dinámica Áurea**
+
 ```
 Eje X: Parámetro n (valores discretos)
 Eje Y: Fase Cuasiperiódica [cos(π·φ·n)]
@@ -157,6 +164,7 @@ Eje Z: Valor Ponderado [cos(π·φ·n) + dimensión]
 ```
 
 **Componentes matemáticos:**
+
 - **Paridad**: `cos(π·n)` — Alterna entre 1 (n par) y -1 (n impar)
 - **Fase Cuasiperiódica**: `cos(π·φ·n)` — Distribución no periódica basada en φ
 - **Dimensión**: `paridad × fase` — Producto que modula el comportamiento
@@ -165,12 +173,14 @@ Eje Z: Valor Ponderado [cos(π·φ·n) + dimensión]
 Los puntos se colorean con la escala **Viridis** según el valor ponderado, mostrando visualmente cómo la dinámica evoluciona.
 
 #### 2. **Gráfico 2D: Validación Experimental**
+
 ```
 Eje X: Parámetro n
 Eje Y: Probabilidad P(|01⟩)
 ```
 
 **Capas:**
+
 - 🟠 **Línea naranja**: Predicción teórica basada en la fórmula áurea
 - 🔵 **Puntos azules**: Resultados experimentales reales de Qiskit
 
@@ -183,17 +193,20 @@ La probabilidad de medir el estado `|01⟩` se modela como:
 $$P_n = 0.5 - 0.5 \cdot \cos(π \cdot \phi \cdot n) \cdot \cos(π \cdot n)$$
 
 Donde:
+
 - φ ≈ 1.618 (razón áurea)
 - n es el número de la ejecución o iteración
 
 ### Cómo Usar
 
 **En modo interactivo:**
+
 ```bash
 qiskit (🖥️  Simulador)> analisis
 ```
 
 **O en pipeline:**
+
 ```bash
 crear 1 | agregar h 0 | medir | ejecutar 1000 
 ```
@@ -228,35 +241,45 @@ n | Paridad | Fase cuasiperiódica | Dimension | Valor Ponderado
 ## 📊 Ejemplos Prácticos
 
 ### Ejemplo 1: Superposición Simple
+
 ```bash
 crear 1 | agregar h 0 | medir | ejecutar 1000
 ```
+
 Crea un qubit en superposición y lo mide 1000 veces. Espera ~50% |0⟩ y ~50% |1⟩.
 
 ### Ejemplo 2: Entrelazamiento Bell
+
 ```bash
 crear 2 | agregar h 0 | agregar cx 0 1 | medir | ejecutar 1000
 ```
+
 Crea un par de Bell. Resultado: siempre |00⟩ o |11⟩ (nunca |01⟩ ni |10⟩).
 
 ### Ejemplo 3: Puerta Áurea
+
 ```bash
 crear 1 | agregar h 0 | agregar phi 3 0 | medir | ejecutar 1000
 ```
+
 Aplica la puerta áurea con n=3 a un qubit en superposición.
 
 ### Ejemplo 4: Análisis Completo
+
 ```bash
 analisis
 ```
+
 Ejecuta la visualización 3D de dinámica áurea con n_max=10 (interactivo).
 
 ### Ejemplo 5: Usar IBM Quantum
+
 ```bash
 login sk_ibm_1234567890abcdef
 backend ibm_sherbrooke
 crear 2 | agregar h 0 | agregar cx 0 1 | medir | ejecutar 100
 ```
+
 Ejecuta en hardware real de IBM.
 
 ---
@@ -284,19 +307,23 @@ Ejecuta en hardware real de IBM.
 ## 🎓 Conceptos Matemáticos
 
 ### Razón Áurea (φ)
+
 $$\phi = \frac{1 + \sqrt{5}}{2} \approx 1.618034...$$
 
 Es un número fundamental que aparece en:
+
 - Naturaleza: proporción de espirales de caracol, flores, galaxias
 - Arte: rectangles perfectos
 - **Física Cuántica**: Este proyecto explora su rol en distribuiciones no periódicas
 
 ### Fase Áurea
+
 $$\lambda_n = \frac{\pi}{\phi} \approx 1.944 \text{ rad}$$
 
 Utilizada en la puerta `GoldenGate` para aplicar cambios de fase específicos basados en φ.
 
 ### Cuasiperiodicidad
+
 La función `cos(π·φ·n)` genera un patrón que **nunca se repite** exactamente porque φ es irracional. Esto es útil para sistemas dinámicos caóticos.
 
 ---
@@ -304,14 +331,17 @@ La función `cos(π·φ·n)` genera un patrón que **nunca se repite** exactamen
 ## ⚙️ Configuración Avanzada
 
 ### Variables de Entorno
+
 ```bash
 QISKIT_LOG_LEVEL=DEBUG  # Aumentar verbosidad
 ```
 
 ### Personalizar Shots por Defecto
+
 Edita `circuito_aureo.py` línea ~400 para cambiar shots predeterminados.
 
 ### Agregar Puertas Personalizadas
+
 Modifica el diccionario `GATES_DB` en `circuito_aureo.py` para añadir nuevas puertas.
 
 ---
@@ -319,15 +349,18 @@ Modifica el diccionario `GATES_DB` en `circuito_aureo.py` para añadir nuevas pu
 ## 🐛 Resolución de Problemas
 
 ### Error: "IBM Quantum Runtime no instalado"
+
 ```bash
 pip install qiskit-ibm-runtime
 ```
 
 ### Error al conectar con IBM
-- Verifica tu token en https://quantum.ibm.com/account
+
+- Verifica tu token en <https://quantum.ibm.com/account>
 - Asegúrate de tener conexión a internet
 
 ### El análisis no abre en navegador
+
 - Verifica que `analisis_aureo.html` se creó en el directorio actual
 - Abrelo manualmente en tu navegador
 
@@ -355,4 +388,3 @@ Apache 2.0.
 ---
 
 **Última actualización**: 2025 | **Versión**: 3.2
-

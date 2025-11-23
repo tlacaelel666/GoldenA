@@ -4,7 +4,7 @@ Script principal de entrada para Qiskit Runtime CLI.
 Importa y ejecuta la lógica desde circuito_aureo.py
 """
 import sys
-from circuito_aureo import main
+from golden.circuito_aureo import main
 
 if __name__ == "__main__":
     try:
