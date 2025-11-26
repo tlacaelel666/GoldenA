@@ -15,6 +15,7 @@ from qiskit.visualization import plot_histogram
 from analisis_aureo import ejecutar_analisis
 from golden.gold_cgh import demo_fibonacci_metriplectic, analyze_circuit_metriplectic
 from golden.bloch_viz import visualize_bloch_spheres, print_bloch_info
+from golden.circuit_templates import CIRCUIT_TEMPLATES
 import matplotlib.pyplot as plt
 import logging
 from pathlib import Path
@@ -140,7 +141,8 @@ def print_banner():
 {chr(9562)}{chr(9552)*78}{chr(9565)}{Colors.ENDC}
 
 {Colors.BOLD}{Colors.OKGREEN}📖 Escribe 'ayuda' para comandos | 'login <token>' para IBM Quantum
-🎯 'puertas' para listar puertas | 💡 'demo' para ver ejemplos
+🎯 'puertas' para listar puertas | 🧩 'plantillas' para circuitos pre-construidos
+💡 'demo' para ver ejemplos
 {Colors.ENDC}
     """
     print(banner)
@@ -164,6 +166,15 @@ def show_gates():
                 gate_info = GATES_DB[gate_name]
                 print(f"  {Colors.OKGREEN}{gate_name:<8}{Colors.ENDC} → {gate_info['name']:<15} ({gate_info['desc']})")
             print()
+
+
+def show_templates():
+    """Muestra todas las plantillas disponibles"""
+    print(f"\n{Colors.BOLD}{Colors.OKCYAN}🧩 PLANTILLAS DE CIRCUITOS{Colors.ENDC}\n")
+    
+    for name, info in CIRCUIT_TEMPLATES.items():
+        print(f"  {Colors.OKGREEN}{name:<15}{Colors.ENDC} → {info['desc']}")
+        print(f"    {Colors.OKBLUE}Pipeline: {info['pipeline']}{Colors.ENDC}\n")
 
 def show_help():
     """Muestra ayuda de comandos"""
@@ -195,7 +206,10 @@ def show_help():
             ("bloch [qubits]", "Visualizar esferas de Bloch (todos o específicos)"),
             ("analisis", "Visualización 3D de dinámica áurea"),
             ("cgh", "Análisis Fibonacci Metripléctico del circuito actual"),
+            ("analisis", "Visualización 3D de dinámica áurea"),
+            ("cgh", "Análisis Fibonacci Metripléctico del circuito actual"),
             ("puertas", "Ver puertas disponibles"),
+            ("plantillas", "Ver circuitos pre-construidos"),
             ("demo", "Ejemplos de circuitos"),
             ("ayuda", "Esta ayuda"),
         ],
@@ -341,6 +355,16 @@ class QiskitCLI:
 
             command = parts[0].lower()
             args = parts[1:]
+
+            # ============ PLANTILLAS (EXPANSIÓN) ============
+            if command in CIRCUIT_TEMPLATES:
+                template = CIRCUIT_TEMPLATES[command]
+                print(f"{Colors.OKCYAN}🧩 Expandiendo plantilla '{command}': {template['desc']}{Colors.ENDC}")
+                # Ejecutar recursivamente el pipeline de la plantilla
+                if not self.execute_pipeline(template["pipeline"]):
+                    return False
+                continue
+
 
             # ============ CREAR ============
             if command == "crear":
@@ -607,6 +631,8 @@ class QiskitCLI:
             # ============ OTROS COMANDOS ============
             elif command == "puertas":
                 show_gates()
+            elif command == "plantillas":
+                show_templates()
             elif command == "demo":
                 self.show_demos()
             elif command == "ayuda":
@@ -715,9 +741,13 @@ class QiskitCLI:
                     else:
                         print(f"{Colors.OKCYAN}Usando: Simulador AER local{Colors.ENDC}")
 
-                elif command in ["puertas", "demo", "ayuda"]:
+                        print(f"{Colors.OKCYAN}Usando: Simulador AER local{Colors.ENDC}")
+
+                elif command in ["puertas", "plantillas", "demo", "ayuda"]:
                     if command == "puertas":
                         show_gates()
+                    elif command == "plantillas":
+                        show_templates()
                     elif command == "demo":
                         self.show_demos()
                     else:
